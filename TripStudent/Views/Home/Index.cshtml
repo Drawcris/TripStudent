@@ -1,0 +1,24 @@
+﻿@using TripStudent.ViewModel;
+@model IEnumerable<TripDetailViewModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Dzień dobry</h1>
+    <p>Witaj w naszym serwisie podróżniczym dla studentów! Jesteśmy dedykowaną platformą, która umożliwia studentom odkrywanie fascynujących miejsc z przyjaciółmi po przystępnych cenach.</p>
+    <img src="https://img.freepik.com/darmowe-zdjecie/mloda-podrozniczka-cieszaca-sie-wiejskim-otoczeniem_23-2149125532.jpg" />
+
+</div>
+
+
+<ul>
+    @foreach(var item in Model)
+    {
+        <li>
+            <a asp-controller="Home" asp-action="Detail"
+            asp-route-id="@item.ID"> @item.Destination - @item.Price zł | @item.Start_date.ToString("yyyy-MM-dd") - @item.End_date.ToString("yyyy-MM-dd") |</a>
+        </li>
+    }
+</ul>
+

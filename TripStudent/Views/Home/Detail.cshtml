@@ -1,0 +1,17 @@
+﻿@using TripStudent.ViewModel;
+@model TripDetailViewModel;
+@{
+    ViewData["Title"] = "Detail";
+}
+<h1>@ViewData["Title"]</h1>
+
+
+
+
+<ul>
+    <li><p> Wycieczka do: @Model.Destination</p></li>
+    <li><p> Cena wycieczki: @Model.Price zł</p></li>
+    <li><p> Wyjazd: @Model.Start_date.ToString("yyyy-MM-dd")</p></li>
+    <li><p> Powrót: @Model.End_date.ToString("yyyy-MM-dd")</p></li>
+
+</ul>
