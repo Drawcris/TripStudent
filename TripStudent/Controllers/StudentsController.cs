@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using TripStudent.Data;
 using TripStudent.Models;
 
-namespace TripStudent
+namespace TripStudent.Controllers
 {
     public class StudentsController : Controller
     {

@@ -19,5 +19,8 @@ namespace TripStudent.Data
             modelBuilder.Entity<Reservation>().ToTable("Reservation");
             modelBuilder.Entity<Student>().ToTable("Student");
         }
+
+
+
     }
 }

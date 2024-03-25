@@ -1,7 +1,14 @@
-﻿namespace TripStudent.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+
+namespace TripStudent.Models
 {
     public class Trip
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         public int tripID { get; set; }
 
         public string Destination { get; set; }
@@ -14,6 +21,6 @@
 
         
 
-        public ICollection<Reservation> Reservations { get; set; }
+        public ICollection<Reservation>? Reservations { get; set; }
     }
 }
