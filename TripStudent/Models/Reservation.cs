@@ -1,4 +1,7 @@
-﻿namespace TripStudent.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace TripStudent.Models
 {
     public enum status
     {
@@ -6,6 +9,8 @@
     }
     public class Reservation
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int reservationID { get; set; }
 
         public int studentID { get; set; }
@@ -18,9 +23,9 @@
 
 
 
-        public Trip Trip { get; set; }
+        public Trip? Trip { get; set; }
 
-        public Student Student { get; set; }
+        public Student? Student { get; set; }
 
     }
 }
