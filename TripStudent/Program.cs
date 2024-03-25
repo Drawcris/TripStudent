@@ -1,8 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using TripStudent.Data;
+using TripStudent.Repository.Interfaces;
+using TripStudent.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<ITripRepository, TripRepository>();
 // Add DbContext to the service collection
 builder.Services.AddDbContext<TripContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
