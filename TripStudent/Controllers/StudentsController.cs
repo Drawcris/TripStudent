@@ -7,151 +7,81 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TripStudent.Data;
 using TripStudent.Models;
+using TripStudent.Repository;
+using TripStudent.Repository.Interfaces;
 
 namespace TripStudent.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly TripContext _context;
+        private IStudentRepository _studentRepository;
 
-        public StudentsController(TripContext context)
+        public StudentsController(DbContextOptions<TripContext> options)
         {
-            _context = context;
+            _studentRepository = new StudentRepository(new TripContext(options));
         }
 
-        // GET: Students
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public ActionResult Index()
         {
-            return View(await _context.Students.ToListAsync());
+            var model = _studentRepository.GetAll();
+            return View(model);
         }
 
-        // GET: Students/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.studentID == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return View(student);
-        }
-
-        // GET: Students/Create
-        public IActionResult Create()
+        [HttpGet]
+        public ActionResult AddStudent()
         {
             return View();
         }
 
-        // POST: Students/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("studentID,name,lastname,email")] Student student)
+        public ActionResult AddStudent(Student model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(student);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _studentRepository.Insert(model);
+                _studentRepository.Save();
+                return RedirectToAction("Index", "Students");
             }
-            return View(student);
+
+            return View();
         }
 
-        // GET: Students/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet]
+        public ActionResult EditStudent(int studentID)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-            return View(student);
+            Student? model = _studentRepository.GetById(studentID);
+            return View(model);
         }
 
-        // POST: Students/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("studentID,name,lastname,email")] Student student)
+        public ActionResult EditStudent(Student model)
         {
-            if (id != student.studentID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(student.studentID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _studentRepository.Update(model);
+                _studentRepository.Save();
+                return RedirectToAction("Index", "Students");
             }
-            return View(student);
+            else
+            {
+                return View(model);
+            }
         }
 
-        // GET: Students/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet]
+        public ActionResult DeleteStudent(int studentID)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.studentID == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return View(student);
+            Student? model = _studentRepository.GetById(studentID);
+            return View(model);
         }
 
-        // POST: Students/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        public ActionResult Delete(int studentID)
         {
-            var student = await _context.Students.FindAsync(id);
-            if (student != null)
-            {
-                _context.Students.Remove(student);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool StudentExists(int id)
-        {
-            return _context.Students.Any(e => e.studentID == id);
+            _studentRepository.Delete(studentID);
+            _studentRepository.Save();
+            return RedirectToAction("Index", "Students");
         }
     }
 }

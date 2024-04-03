@@ -1,34 +1,31 @@
 ﻿@model IEnumerable<TripStudent.Models.Reservation>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewBag.Title = "Index";
 }
-
-<h1>Reservations</h1>
-
+<h2>Index</h2>
 <p>
-    <a asp-action="Create">Create New</a>
+    @Html.ActionLink("Add Reservation", "AddReservation")
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.reservation_date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trip)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.reservation_date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Trip)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Student)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.reservation_date)
@@ -37,17 +34,15 @@
                 @Html.DisplayFor(modelItem => item.status)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Trip.tripID)
+                @Html.DisplayFor(modelItem => item.tripID)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Student.email)
+                @Html.DisplayFor(modelItem => item.studentID)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.reservationID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.reservationID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.reservationID">Delete</a>
+                @Html.ActionLink("Edit", "EditReservation", new { reservationID = item.reservationID }) |
+                @Html.ActionLink("Delete", "DeleteReservation", new { ReservationID = item.reservationID })
             </td>
         </tr>
-}
-    </tbody>
+    }
 </table>

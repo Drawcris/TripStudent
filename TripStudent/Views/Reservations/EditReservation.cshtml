@@ -1,0 +1,58 @@
+﻿@model TripStudent.Models.Reservation
+@{
+    ViewBag.Title = "EditReservation";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Edit Reservation</h4>
+        <hr />
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.tripID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.reservation_date, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.reservation_date)
+                @Html.ValidationMessageFor(model => model.reservation_date)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.status, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.status)
+                @Html.ValidationMessageFor(model => model.status)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.tripID, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.tripID)
+                @Html.ValidationMessageFor(model => model.tripID)
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.studentID, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.studentID)
+                @Html.ValidationMessageFor(model => model.studentID)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Update" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to reservations List", "Index")
+</div>
+

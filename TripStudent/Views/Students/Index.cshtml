@@ -1,31 +1,28 @@
 ﻿@model IEnumerable<TripStudent.Models.Student>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewBag.Title = "Index";
 }
-
-<h1>Students</h1>
-
+<h2>Index</h2>
 <p>
-    <a asp-action="Create">Create New</a>
+    @Html.ActionLink("Add Student", "AddStudent")
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.lastname)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.email)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.lastname)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.email)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.name)
@@ -37,11 +34,9 @@
                 @Html.DisplayFor(modelItem => item.email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.studentID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.studentID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.studentID">Delete</a>
+                @Html.ActionLink("Edit", "EditStudent", new { StudentID = item.studentID }) |
+                @Html.ActionLink("Delete", "DeleteStudent", new { StudentID = item.studentID })
             </td>
         </tr>
-}
-    </tbody>
+    }
 </table>

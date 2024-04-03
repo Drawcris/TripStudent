@@ -1,0 +1,50 @@
+﻿@model TripStudent.Models.Reservation
+@{
+    ViewBag.Title = "DeleteReservation";
+}
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    @using (Html.BeginForm("Delete", "Reservation", FormMethod.Post))
+    {
+        @Html.HiddenFor(e => e.reservationID)
+        <h4>Delete reservation</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.reservation_date)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.reservation_date)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.status)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.status)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.tripID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.tripID)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.studentID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.studentID)
+            </dd>
+        </dl>
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" asp-action="Index" /> |
+            @Html.ActionLink("Back to Reservation", "Index")
+        </div>
+    }
+</div>

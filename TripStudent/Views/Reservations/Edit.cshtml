@@ -1,4 +1,4 @@
-﻿@model TripStudent.Models.Reservation
+﻿@model TripStudent.Models.Trip
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,32 +6,32 @@
 
 <h1>Edit</h1>
 
-<h4>Reservation</h4>
+<h4>Trip</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="reservationID" />
+            <input type="hidden" asp-for="tripID" />
             <div class="form-group">
-                <label asp-for="studentID" class="control-label"></label>
-                <select asp-for="studentID" class="form-control" asp-items="ViewBag.studentID"></select>
-                <span asp-validation-for="studentID" class="text-danger"></span>
+                <label asp-for="Destination" class="control-label"></label>
+                <input asp-for="Destination" class="form-control" />
+                <span asp-validation-for="Destination" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="tripID" class="control-label"></label>
-                <select asp-for="tripID" class="form-control" asp-items="ViewBag.tripID"></select>
-                <span asp-validation-for="tripID" class="text-danger"></span>
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="reservation_date" class="control-label"></label>
-                <input asp-for="reservation_date" class="form-control" />
-                <span asp-validation-for="reservation_date" class="text-danger"></span>
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="status" class="control-label"></label>
-                <input asp-for="status" class="form-control" />
-                <span asp-validation-for="status" class="text-danger"></span>
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
