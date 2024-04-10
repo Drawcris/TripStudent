@@ -9,23 +9,23 @@ using TripStudent.Data;
 using TripStudent.Models;
 using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
+using TripStudent.Services.Interfaces;
 
 namespace TripStudent.Controllers
 {
     public class StudentsController : Controller
     {
-        private IStudentRepository _studentRepository;
+        private IStudentService _studentService;
 
-        public StudentsController(DbContextOptions<TripContext> options)
+        public StudentsController(IStudentService options)
         {
-            _studentRepository = new StudentRepository(new TripContext(options));
+            this._studentService = options;
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = _studentRepository.GetAll();
-            return View(model);
+            return View(await _studentService.GetAllStudents());
         }
 
         [HttpGet]
@@ -39,8 +39,8 @@ namespace TripStudent.Controllers
         {
             if (ModelState.IsValid)
             {
-                _studentRepository.Insert(model);
-                _studentRepository.Save();
+                _studentService.AddStudent(model);
+                _studentService.SaveStudent();
                 return RedirectToAction("Index", "Students");
             }
 
@@ -48,9 +48,9 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditStudent(int studentID)
+        public async Task<ActionResult> EditStudent(int studentID)
         {
-            Student? model = _studentRepository.GetById(studentID);
+            Student? model = await _studentService.GetStudentById(studentID);
             return View(model);
         }
 
@@ -59,8 +59,8 @@ namespace TripStudent.Controllers
         {
             if (ModelState.IsValid)
             {
-                _studentRepository.Update(model);
-                _studentRepository.Save();
+                _studentService.UpdateStudent(model);
+                _studentService.SaveStudent();
                 return RedirectToAction("Index", "Students");
             }
             else
@@ -70,17 +70,17 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
-        public ActionResult DeleteStudent(int studentID)
+        public async Task<ActionResult> DeleteStudent(int studentID)
         {
-            Student? model = _studentRepository.GetById(studentID);
+            Student? model = await _studentService.GetStudentById(studentID);
             return View(model);
         }
 
         [HttpPost]
         public ActionResult Delete(int studentID)
         {
-            _studentRepository.Delete(studentID);
-            _studentRepository.Save();
+            _studentService.DeleteStudent(studentID);
+            _studentService.SaveStudent();
             return RedirectToAction("Index", "Students");
         }
     }

@@ -9,23 +9,23 @@ using TripStudent.Data;
 using TripStudent.Models;
 using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
+using TripStudent.Services.Interfaces;
 
 namespace TripStudent.Controllers
 {
     public class ReservationsController : Controller
     {
-        private IReservationRepository _reservationRepository;
+        private IReservationService _reservationService;
 
-        public ReservationsController(DbContextOptions<TripContext> options)
+        public ReservationsController(IReservationService options)
         {
-            _reservationRepository = new ReservationRepository(new TripContext(options));
+            this._reservationService = options;
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = _reservationRepository.GetAll();
-            return View(model);
+            return View(await _reservationService.GetAllReservation());
         }
 
         [HttpGet]
@@ -39,8 +39,8 @@ namespace TripStudent.Controllers
         {
             if (ModelState.IsValid)
             {
-                _reservationRepository.Insert(model);
-                _reservationRepository.Save();
+                _reservationService.AddReservation(model);
+                _reservationService.SaveReservation();
                 return RedirectToAction("Index", "Reservations");
             }
 
@@ -48,9 +48,9 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditReservation(int reservationID)
+        public async Task<ActionResult> EditReservation(int reservationID)
         {
-            Reservation? model = _reservationRepository.GetById(reservationID);
+            Reservation? model = await _reservationService.GetReservationById(reservationID);
             return View(model);
         }
 
@@ -59,8 +59,8 @@ namespace TripStudent.Controllers
         {
             if (ModelState.IsValid)
             {
-                _reservationRepository.Update(model);
-                _reservationRepository.Save();
+                _reservationService.UpdateReservation(model);
+                _reservationService.SaveReservation();
                 return RedirectToAction("Index", "Reservations");
             }
             else
@@ -70,17 +70,17 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
-        public ActionResult DeleteReservation(int reservationID)
+        public async Task<ActionResult> DeleteReservation(int reservationID)
         {
-            Reservation? model = _reservationRepository.GetById(reservationID);
+            Reservation? model = await _reservationService.GetReservationById(reservationID);
             return View(model);
         }
 
         [HttpPost]
         public ActionResult Delete(int reservationID)
         {
-            _reservationRepository.Delete(reservationID);
-            _reservationRepository.Save();
+            _reservationService.DeleteReservation(reservationID);
+            _reservationService.SaveReservation();
             return RedirectToAction("Index", "Reservation");
         }
     }

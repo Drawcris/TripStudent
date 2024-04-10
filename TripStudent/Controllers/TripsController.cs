@@ -9,23 +9,23 @@ using TripStudent.Data;
 using TripStudent.Models;
 using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
+using TripStudent.Services.Interfaces;
 
 namespace TripStudent.Controllers
 {
     public class TripsController : Controller
     {
-        private ITripRepository _tripRepository;
+        private ITripService _tripService;
 
-        public TripsController(DbContextOptions<TripContext> options)
+        public TripsController(ITripService options)
         {
-            _tripRepository = new TripRepository(new TripContext(options));
+            this._tripService = options;
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var model = _tripRepository.GetAll();
-            return View(model);
+            return View(await _tripService.GetAllTrips());
         }
 
         [HttpGet]
@@ -39,8 +39,8 @@ namespace TripStudent.Controllers
         {
             if (ModelState.IsValid)
             {
-                _tripRepository.Insert(model);
-                _tripRepository.Save();
+                _tripService.AddTrip(model);
+                _tripService.SaveTrip();
                 return RedirectToAction("Index", "Trips");
             }
 
@@ -48,9 +48,9 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
-        public ActionResult EditTrip(int tripID)
+        public async Task<ActionResult> EditTrip(int tripID)
         {
-            Trip? model = _tripRepository.GetById(tripID);
+            Trip? model = await _tripService.GetTripById(tripID);
             return View(model);
         }
 
@@ -59,8 +59,8 @@ namespace TripStudent.Controllers
         {
             if (ModelState.IsValid)
             {
-                _tripRepository.Update(model);
-                _tripRepository.Save();
+                _tripService.UpdateTrip(model);
+                _tripService.SaveTrip();
                 return RedirectToAction("Index", "Trips");
             }
             else
@@ -70,17 +70,17 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
-        public ActionResult DeleteTrip(int tripID)
+        public async Task<ActionResult> DeleteTrip(int tripID)
         {
-            Trip? model = _tripRepository.GetById(tripID);
+            Trip? model = await _tripService.GetTripById(tripID);
             return View(model);
         }
 
         [HttpPost]
         public ActionResult Delete(int tripID)
         {
-            _tripRepository.Delete(tripID);
-            _tripRepository.Save();
+            _tripService.DeleteTrip(tripID);
+            _tripService.SaveTrip();
             return RedirectToAction("Index", "Trips");
         }
     }

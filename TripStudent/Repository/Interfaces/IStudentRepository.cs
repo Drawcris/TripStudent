@@ -3,11 +3,11 @@ namespace TripStudent.Repository.Interfaces
 {
     public interface IStudentRepository
     {
-        IEnumerable<Student> GetAll();
-        Student? GetById(int studentID);
-        void Insert(Student student);
+        Task<List<Student>> GetAll();
+        ValueTask<Student?> GetById(int studentID);
+        Task Insert(Student student);
         void Update(Student student);
         void Delete(int studentID);
-        void Save();
+        Task Save();
     }
 }

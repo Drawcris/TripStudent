@@ -16,19 +16,19 @@ namespace TripStudent.Repository
             _context = context;
         }
 
-        public IEnumerable<Student> GetAll()
+        public Task<List<Student>> GetAll()
         {
-            return _context.Students.ToList();
+            return _context.Students.ToListAsync();
         }
 
-        public Student? GetById(int studentID)
+        public ValueTask<Student?> GetById(int tripID)
         {
-            return _context.Students.Find(studentID);
+            return _context.Students.FindAsync(tripID);
         }
 
-        public void Insert(Student student)
+        public async Task Insert(Student student)
         {
-            _context.Students.Add(student);
+            await _context.Students.AddAsync(student);
         }
 
         public void Update(Student student)
@@ -46,9 +46,9 @@ namespace TripStudent.Repository
             }
 
         }
-        public void Save()
+        public async Task Save()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         private bool disposed = false;
 

@@ -15,20 +15,21 @@ namespace TripStudent.Repository
             _context = context;
         }
 
-        public IEnumerable<Reservation> GetAll()
+        public Task<List<Reservation>> GetAll()
         {
-            return _context.Reservations.ToList();
+            return _context.Reservations.ToListAsync();
         }
 
-        public Reservation? GetById(int reservationID)
+        public ValueTask<Reservation?> GetById(int reservationsID)
         {
-            return _context.Reservations.Find(reservationID);
+            return _context.Reservations.FindAsync(reservationsID);
         }
 
-        public void Insert(Reservation reservation)
+        public async Task Insert(Reservation reservation)
         {
-            _context.Reservations.Add(reservation);
+            await _context.Reservations.AddAsync(reservation);
         }
+
 
         public void Update(Reservation reservation)
         {
@@ -46,10 +47,10 @@ namespace TripStudent.Repository
 
         }
 
-    
-        public void Save()
+
+        public async Task Save()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         private bool disposed = false;
 
