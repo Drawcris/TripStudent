@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TripStudent.Data;
 using TripStudent.Models;
+using TripStudent.ViewModel;
 using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
 using TripStudent.Services.Interfaces;
+using TripStudent.Services;
 
 namespace TripStudent.Controllers
 {
@@ -25,7 +27,22 @@ namespace TripStudent.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _reservationService.GetAllReservation());
+            var reservations = await _reservationService.GetAllReservation();
+
+            var reservationsViewModellist = reservations.Select(reservation => new ReservationViewModel
+            {
+                reservationID = reservation.reservationID,
+                studentID = reservation.studentID,
+                tripID = reservation.tripID,
+                reservation_date = reservation.reservation_date,
+                status = reservation.status,
+                Trip = reservation.Trip,
+                Student = reservation.Student
+                
+            });
+
+
+            return View(reservationsViewModellist);
         }
 
         [HttpGet]
@@ -35,11 +52,21 @@ namespace TripStudent.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddReservation(Reservation model)
+        public ActionResult AddReservation(ReservationViewModel reservationViewModel)
         {
             if (ModelState.IsValid)
             {
-                _reservationService.AddReservation(model);
+                var reservation = new Reservation
+                {
+                   reservationID = reservationViewModel.reservationID,
+                   studentID = reservationViewModel.studentID,
+                   tripID = reservationViewModel.tripID,
+                   status = reservationViewModel.status,
+                   Trip = reservationViewModel.Trip,
+                   Student = reservationViewModel.Student
+
+                };
+                _reservationService.AddReservation(reservation);
                 _reservationService.SaveReservation();
                 return RedirectToAction("Index", "Reservations");
             }
@@ -50,30 +77,65 @@ namespace TripStudent.Controllers
         [HttpGet]
         public async Task<ActionResult> EditReservation(int reservationID)
         {
-            Reservation? model = await _reservationService.GetReservationById(reservationID);
-            return View(model);
+            var reservation = await _reservationService.GetReservationById(reservationID);
+            if (reservation == null)
+            {
+                return NotFound();
+            }
+            var reservationViewModel = new ReservationViewModel
+            {
+                reservationID = reservation.reservationID,
+                studentID = reservation.studentID,
+                tripID = reservation.tripID,
+                status = reservation.status,
+                Trip = reservation.Trip,
+                Student = reservation.Student
+            };
+            return View(reservationViewModel);
         }
 
         [HttpPost]
-        public ActionResult Edit(Reservation model)
+        public ActionResult Edit(ReservationViewModel reservationViewModel)
         {
             if (ModelState.IsValid)
             {
-                _reservationService.UpdateReservation(model);
+                var reservation = new Reservation
+                {
+                    reservationID = reservationViewModel.reservationID,
+                    studentID = reservationViewModel.studentID,
+                    tripID = reservationViewModel.tripID,
+                    status = reservationViewModel.status,
+                    Trip = reservationViewModel.Trip,
+                    Student = reservationViewModel.Student
+                };
+                _reservationService.UpdateReservation(reservation);
                 _reservationService.SaveReservation();
                 return RedirectToAction("Index", "Reservations");
             }
             else
             {
-                return View(model);
+                return View(reservationViewModel);
             }
         }
 
         [HttpGet]
         public async Task<ActionResult> DeleteReservation(int reservationID)
         {
-            Reservation? model = await _reservationService.GetReservationById(reservationID);
-            return View(model);
+            var reservation = await _reservationService.GetReservationById(reservationID);
+            if (reservation == null)
+            {
+                return NotFound();
+            }
+            var reservationViewModel = new ReservationViewModel
+            {
+                reservationID = reservation.reservationID,
+                studentID = reservation.studentID,
+                tripID = reservation.tripID,
+                status = reservation.status,
+                Trip = reservation.Trip,
+                Student = reservation.Student
+            };
+            return View(reservationViewModel);
         }
 
         [HttpPost]

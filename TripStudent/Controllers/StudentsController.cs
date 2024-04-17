@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TripStudent.Data;
 using TripStudent.Models;
+using TripStudent.ViewModel;
 using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
 using TripStudent.Services.Interfaces;
@@ -25,7 +26,18 @@ namespace TripStudent.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _studentService.GetAllStudents());
+            var students = await _studentService.GetAllStudents();
+
+            var studentsViewModellist = students.Select(student => new StudentViewModel
+            {
+                studentID = student.studentID,
+                name = student.name,
+                lastname = student.lastname,
+                email = student.email,
+            });
+
+
+            return View(studentsViewModellist);
         }
 
         [HttpGet]
@@ -35,11 +47,19 @@ namespace TripStudent.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddStudent(Student model)
+        public ActionResult AddStudent(StudentViewModel studentViewModel)
         {
             if (ModelState.IsValid)
             {
-                _studentService.AddStudent(model);
+                var student = new Student
+                {
+                    studentID = studentViewModel.studentID,
+                    name = studentViewModel.name,
+                    lastname = studentViewModel.lastname,
+                    email = studentViewModel.email
+
+                };
+                _studentService.AddStudent(student);
                 _studentService.SaveStudent();
                 return RedirectToAction("Index", "Students");
             }
@@ -50,36 +70,67 @@ namespace TripStudent.Controllers
         [HttpGet]
         public async Task<ActionResult> EditStudent(int studentID)
         {
-            Student? model = await _studentService.GetStudentById(studentID);
-            return View(model);
+            var student = await _studentService.GetStudentById(studentID);
+            if (student == null)
+            {
+                return NotFound();
+            }
+            var studentViewModel = new StudentViewModel
+            {
+                studentID = student.studentID,
+                name = student.name,
+                lastname = student.lastname,
+                email = student.email
+            };
+            return View(studentViewModel);
+            
         }
 
         [HttpPost]
-        public ActionResult EditStudent(Student model)
+        public ActionResult EditStudent(StudentViewModel studentViewModel)
         {
             if (ModelState.IsValid)
             {
-                _studentService.UpdateStudent(model);
+                var student = new Student
+                {
+                    studentID = studentViewModel.studentID,
+                    name = studentViewModel.name,
+                    lastname = studentViewModel.lastname,
+                    email = studentViewModel.email
+
+                };
+                _studentService.UpdateStudent(student);
                 _studentService.SaveStudent();
                 return RedirectToAction("Index", "Students");
             }
             else
             {
-                return View(model);
+                return View(studentViewModel);
             }
         }
 
         [HttpGet]
         public async Task<ActionResult> DeleteStudent(int studentID)
         {
-            Student? model = await _studentService.GetStudentById(studentID);
-            return View(model);
+            var student = await _studentService.GetStudentById(studentID);
+            if (student == null)
+            {
+                return NotFound();
+            }
+            var studentViewModel = new StudentViewModel
+            {
+                studentID = student.studentID,
+                name = student.name,
+                lastname = student.lastname,
+                email = student.email
+            };
+            return View(studentViewModel);
         }
 
         [HttpPost]
-        public ActionResult Delete(int studentID)
+        public ActionResult Delete(Student student)
         {
-            _studentService.DeleteStudent(studentID);
+            _studentService.DeleteStudent(student);
             _studentService.SaveStudent();
             return RedirectToAction("Index", "Students");
         }

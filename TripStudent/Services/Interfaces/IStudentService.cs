@@ -14,7 +14,7 @@ namespace TripStudent.Services.Interfaces
 
         void UpdateStudent(Student student);
 
-        void DeleteStudent(int studentID);
+        void DeleteStudent(Student student);
 
         Task SaveStudent();
     }

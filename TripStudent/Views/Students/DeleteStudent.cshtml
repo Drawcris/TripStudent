@@ -1,4 +1,4 @@
-﻿@model TripStudent.Models.Student
+﻿@model TripStudent.ViewModel.StudentViewModel
 @{
     ViewBag.Title = "DeleteStudent";
 }
@@ -34,9 +34,11 @@
                 @Html.DisplayFor(model => model.email)
             </dd>
         </dl>
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" asp-action="Index" /> |
-            @Html.ActionLink("Back to Student List", "Index")
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Delete" class="btn btn-default" />
+            </div>
         </div>
     }
 </div>
+<div> @Html.ActionLink("Back to Student List", "Index")</div>

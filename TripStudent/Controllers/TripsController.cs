@@ -9,7 +9,9 @@ using TripStudent.Data;
 using TripStudent.Models;
 using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
+using TripStudent.Services;
 using TripStudent.Services.Interfaces;
+using TripStudent.ViewModel;
 
 namespace TripStudent.Controllers
 {
@@ -25,7 +27,21 @@ namespace TripStudent.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _tripService.GetAllTrips());
+
+            var trips = await _tripService.GetAllTrips();
+
+            var TripViewModelList = trips.Select(trip => new TripViewModel
+            {
+               tripID = trip.tripID,
+               Destination = trip.Destination,
+               Price = trip.Price,
+               StartDate = trip.StartDate,
+               EndDate = trip.EndDate,
+            });
+
+
+            return View(TripViewModelList);
+            
         }
 
         [HttpGet]
@@ -35,11 +51,19 @@ namespace TripStudent.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddTrip(Trip model)
+        public ActionResult AddTrip(TripViewModel tripViewModel)
         {
             if (ModelState.IsValid)
             {
-                _tripService.AddTrip(model);
+                var trip = new Trip
+                {
+                    tripID = tripViewModel.tripID,
+                    Destination = tripViewModel.Destination,
+                    Price = tripViewModel.Price,
+                    StartDate = tripViewModel.StartDate,
+                    EndDate = tripViewModel.EndDate,
+                };
+                _tripService.AddTrip(trip);
                 _tripService.SaveTrip();
                 return RedirectToAction("Index", "Trips");
             }
@@ -50,30 +74,62 @@ namespace TripStudent.Controllers
         [HttpGet]
         public async Task<ActionResult> EditTrip(int tripID)
         {
-            Trip? model = await _tripService.GetTripById(tripID);
-            return View(model);
+            var trip = await _tripService.GetTripById(tripID);
+            if (trip == null)
+            {
+                return NotFound();
+            }
+            var tripViewModel = new TripViewModel
+            {
+                tripID = trip.tripID,
+                Destination = trip.Destination,
+                Price = trip.Price,
+                StartDate = trip.StartDate,
+                EndDate = trip.EndDate,
+            };
+            return View(tripViewModel);
         }
 
         [HttpPost]
-        public ActionResult EditTrip(Trip model)
+        public ActionResult EditTrip(TripViewModel tripViewModel)
         {
             if (ModelState.IsValid)
             {
-                _tripService.UpdateTrip(model);
+                var trip = new Trip
+                {
+                    tripID = tripViewModel.tripID,
+                    Destination = tripViewModel.Destination,
+                    Price = tripViewModel.Price,
+                    StartDate = tripViewModel.StartDate,
+                    EndDate = tripViewModel.EndDate,
+                };
+                _tripService.UpdateTrip(trip);
                 _tripService.SaveTrip();
                 return RedirectToAction("Index", "Trips");
             }
             else
             {
-                return View(model);
+                return View(tripViewModel);
             }
         }
 
         [HttpGet]
         public async Task<ActionResult> DeleteTrip(int tripID)
         {
-            Trip? model = await _tripService.GetTripById(tripID);
-            return View(model);
+            var trip = await _tripService.GetTripById(tripID);
+            if (trip == null)
+            {
+                return NotFound();
+            }
+            var tripViewModel = new TripViewModel
+            {
+                tripID = trip.tripID,
+                Destination = trip.Destination,
+                Price = trip.Price,
+                StartDate = trip.StartDate,
+                EndDate = trip.EndDate,
+            };
+            return View(tripViewModel);
         }
 
         [HttpPost]

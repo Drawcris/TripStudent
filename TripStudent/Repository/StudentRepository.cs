@@ -36,14 +36,16 @@ namespace TripStudent.Repository
             _context.Entry(student).State = EntityState.Modified;
         }
 
-        public void Delete(int studentID)
+        public void Delete(Student student)
         {
-            Student? student = _context.Students.Find(studentID);
+           _context.Students.Find(student);
 
             if (student != null)
             {
                 _context.Students.Remove(student);
+                _context.SaveChangesAsync();
             }
+
 
         }
         public async Task Save()

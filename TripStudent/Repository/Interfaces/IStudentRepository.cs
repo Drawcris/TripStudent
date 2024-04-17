@@ -7,7 +7,7 @@ namespace TripStudent.Repository.Interfaces
         ValueTask<Student?> GetById(int studentID);
         Task Insert(Student student);
         void Update(Student student);
-        void Delete(int studentID);
+        void Delete(Student student);
         Task Save();
     }
 }

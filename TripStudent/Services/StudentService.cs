@@ -38,9 +38,9 @@ namespace TripStudent.Services
             _context.Update(student);
         }
 
-        public void DeleteStudent(int studentID)
+        public void DeleteStudent(Student student)
         {
-            _context.Delete(studentID);
+            _context.Delete(student);
         }
 
         public async Task SaveStudent()
