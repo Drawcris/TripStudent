@@ -4,6 +4,10 @@ using TripStudent.Repository.Interfaces;
 using TripStudent.Repository;
 using TripStudent.Services;
 using TripStudent.Services.Interfaces;
+using FluentValidation;
+using TripStudent.ViewModel;
+using TripStudent.Validator;
+using TripStudent.AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
@@ -12,6 +16,14 @@ builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<ITripService, TripService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IValidator<StudentViewModel>, StudentValidator>();
+builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
+builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
+builder.Services.AddAutoMapper(options =>
+{
+    options.AddProfile<TripAutoMapper>();
+});
+
 // Add DbContext to the service collection
 builder.Services.AddDbContext<TripContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

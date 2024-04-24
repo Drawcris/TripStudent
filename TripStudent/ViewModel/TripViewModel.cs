@@ -1,4 +1,6 @@
-﻿namespace TripStudent.ViewModel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TripStudent.ViewModel
 {
     public class TripViewModel
     {

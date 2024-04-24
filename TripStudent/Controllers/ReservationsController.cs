@@ -12,16 +12,19 @@ using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
 using TripStudent.Services.Interfaces;
 using TripStudent.Services;
+using FluentValidation;
 
 namespace TripStudent.Controllers
 {
     public class ReservationsController : Controller
     {
         private IReservationService _reservationService;
+        private readonly IValidator<ReservationViewModel> _reservationValidator;
 
-        public ReservationsController(IReservationService options)
+        public ReservationsController(IReservationService options, IValidator<ReservationViewModel> reservationValidator)
         {
             this._reservationService = options;
+            _reservationValidator = reservationValidator;
         }
 
         [HttpGet]
@@ -54,20 +57,24 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult AddReservation(ReservationViewModel reservationViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                var reservation = new Reservation
+            var _ReservationValidator = _reservationValidator.Validate(reservationViewModel);
+            if (_ReservationValidator.IsValid) {
+                if (ModelState.IsValid)
                 {
-                   reservationID = reservationViewModel.reservationID,
-                   studentID = reservationViewModel.studentID,
-                   tripID = reservationViewModel.tripID,
-                   status = reservationViewModel.status,
-                   Trip = reservationViewModel.Trip,
-                   Student = reservationViewModel.Student
+                    var reservation = new Reservation
+                    {
+                        reservationID = reservationViewModel.reservationID,
+                        studentID = reservationViewModel.studentID,
+                        tripID = reservationViewModel.tripID,
+                        status = reservationViewModel.status,
+                        
 
-                };
-                _reservationService.AddReservation(reservation);
-                _reservationService.SaveReservation();
+                    };
+
+
+                    _reservationService.AddReservation(reservation);
+                    _reservationService.SaveReservation();
+                }
                 return RedirectToAction("Index", "Reservations");
             }
 
@@ -97,19 +104,24 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult Edit(ReservationViewModel reservationViewModel)
         {
-            if (ModelState.IsValid)
+
+            var _ReservationValidator = _reservationValidator.Validate(reservationViewModel);
+            if (_ReservationValidator.IsValid)
             {
-                var reservation = new Reservation
+                if (ModelState.IsValid)
                 {
-                    reservationID = reservationViewModel.reservationID,
-                    studentID = reservationViewModel.studentID,
-                    tripID = reservationViewModel.tripID,
-                    status = reservationViewModel.status,
-                    Trip = reservationViewModel.Trip,
-                    Student = reservationViewModel.Student
-                };
-                _reservationService.UpdateReservation(reservation);
-                _reservationService.SaveReservation();
+                    var reservation = new Reservation
+                    {
+                        reservationID = reservationViewModel.reservationID,
+                        studentID = reservationViewModel.studentID,
+                        tripID = reservationViewModel.tripID,
+                        status = reservationViewModel.status,
+                        Trip = reservationViewModel.Trip,
+                        Student = reservationViewModel.Student
+                    };
+                    _reservationService.UpdateReservation(reservation);
+                    _reservationService.SaveReservation();
+                }
                 return RedirectToAction("Index", "Reservations");
             }
             else

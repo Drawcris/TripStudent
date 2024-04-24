@@ -13,10 +13,10 @@ namespace TripStudent.Models
         [Required]
         [MaxLength(50)]
         public string name { get; set;}
-        [Required]
+        
         [MaxLength(50)]
         public string lastname { get; set;}
-        [Required]
+      
         [MaxLength(50)]
         public string email { get; set;}
 

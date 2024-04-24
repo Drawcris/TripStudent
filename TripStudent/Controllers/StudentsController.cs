@@ -11,16 +11,22 @@ using TripStudent.ViewModel;
 using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
 using TripStudent.Services.Interfaces;
+using FluentValidation;
+using AutoMapper;
 
 namespace TripStudent.Controllers
 {
     public class StudentsController : Controller
     {
         private IStudentService _studentService;
+        private readonly IValidator<StudentViewModel> _studentValidator;
+        private readonly IMapper _mapper;
 
-        public StudentsController(IStudentService options)
+        public StudentsController(IStudentService options, IValidator<StudentViewModel> studentValidator, IMapper mapper)
         {
             this._studentService = options;
+            _studentValidator = studentValidator;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,16 +34,19 @@ namespace TripStudent.Controllers
         {
             var students = await _studentService.GetAllStudents();
 
-            var studentsViewModellist = students.Select(student => new StudentViewModel
-            {
-                studentID = student.studentID,
-                name = student.name,
-                lastname = student.lastname,
-                email = student.email,
-            });
+            //var studentsViewModellist = students.Select(student => new StudentViewModel
+            //{
+            //    studentID = student.studentID,
+            //    name = student.name,
+            //    lastname = student.lastname,
+            //    email = student.email,
+            //});
 
 
-            return View(studentsViewModellist);
+            var studentList = _mapper.Map<List<Student>, List<StudentViewModel>>(students);
+
+
+            return View(studentList);
         }
 
         [HttpGet]
@@ -49,21 +58,26 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult AddStudent(StudentViewModel studentViewModel)
         {
-            if (ModelState.IsValid)
+            var _StudentValidator = _studentValidator.Validate(studentViewModel);
+            if (_StudentValidator.IsValid)
             {
-                var student = new Student
+
+                if (ModelState.IsValid)
                 {
-                    studentID = studentViewModel.studentID,
-                    name = studentViewModel.name,
-                    lastname = studentViewModel.lastname,
-                    email = studentViewModel.email
+                    var student = new Student
+                    {
+                        studentID = studentViewModel.studentID,
+                        name = studentViewModel.name,
+                        lastname = studentViewModel.lastname,
+                        email = studentViewModel.email
 
-                };
-                _studentService.AddStudent(student);
-                _studentService.SaveStudent();
-                return RedirectToAction("Index", "Students");
+                    };
+                    _studentService.AddStudent(student);
+                    _studentService.SaveStudent();
+                    return RedirectToAction("Index", "Students");
+                }
+
             }
-
             return View();
         }
 
@@ -89,24 +103,29 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult EditStudent(StudentViewModel studentViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                var student = new Student
-                {
-                    studentID = studentViewModel.studentID,
-                    name = studentViewModel.name,
-                    lastname = studentViewModel.lastname,
-                    email = studentViewModel.email
+            var _StudentValidator = _studentValidator.Validate(studentViewModel);
+            if (_StudentValidator.IsValid) {
 
-                };
-                _studentService.UpdateStudent(student);
-                _studentService.SaveStudent();
+                if (ModelState.IsValid)
+                {
+                    var student = new Student
+                    {
+                        studentID = studentViewModel.studentID,
+                        name = studentViewModel.name,
+                        lastname = studentViewModel.lastname,
+                        email = studentViewModel.email
+
+                    };
+                    _studentService.UpdateStudent(student);
+                    _studentService.SaveStudent();
+                }
                 return RedirectToAction("Index", "Students");
             }
             else
             {
                 return View(studentViewModel);
             }
+
         }
 
         [HttpGet]

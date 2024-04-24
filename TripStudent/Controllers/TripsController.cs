@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using TripStudent.Repository;
 using TripStudent.Repository.Interfaces;
 using TripStudent.Services;
 using TripStudent.Services.Interfaces;
+using TripStudent.Validator;
 using TripStudent.ViewModel;
 
 namespace TripStudent.Controllers
@@ -18,10 +20,12 @@ namespace TripStudent.Controllers
     public class TripsController : Controller
     {
         private ITripService _tripService;
+        private readonly IValidator<TripViewModel> _tripValidator;
 
-        public TripsController(ITripService options)
+        public TripsController(ITripService options, IValidator<TripViewModel> tripValidator)
         {
             this._tripService = options;
+            _tripValidator = tripValidator;
         }
 
         [HttpGet]
@@ -53,18 +57,21 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult AddTrip(TripViewModel tripViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                var trip = new Trip
+            var _TripValidator = _tripValidator.Validate(tripViewModel);
+            if (_TripValidator.IsValid) {
+                if (ModelState.IsValid)
                 {
-                    tripID = tripViewModel.tripID,
-                    Destination = tripViewModel.Destination,
-                    Price = tripViewModel.Price,
-                    StartDate = tripViewModel.StartDate,
-                    EndDate = tripViewModel.EndDate,
-                };
-                _tripService.AddTrip(trip);
-                _tripService.SaveTrip();
+                    var trip = new Trip
+                    {
+                        tripID = tripViewModel.tripID,
+                        Destination = tripViewModel.Destination,
+                        Price = tripViewModel.Price,
+                        StartDate = tripViewModel.StartDate,
+                        EndDate = tripViewModel.EndDate,
+                    };
+                    _tripService.AddTrip(trip);
+                    _tripService.SaveTrip();
+                }
                 return RedirectToAction("Index", "Trips");
             }
 
@@ -93,18 +100,22 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult EditTrip(TripViewModel tripViewModel)
         {
-            if (ModelState.IsValid)
+            var _TripValidator = _tripValidator.Validate(tripViewModel);
+            if (_TripValidator.IsValid)
             {
-                var trip = new Trip
+                if (ModelState.IsValid)
                 {
-                    tripID = tripViewModel.tripID,
-                    Destination = tripViewModel.Destination,
-                    Price = tripViewModel.Price,
-                    StartDate = tripViewModel.StartDate,
-                    EndDate = tripViewModel.EndDate,
-                };
-                _tripService.UpdateTrip(trip);
-                _tripService.SaveTrip();
+                    var trip = new Trip
+                    {
+                        tripID = tripViewModel.tripID,
+                        Destination = tripViewModel.Destination,
+                        Price = tripViewModel.Price,
+                        StartDate = tripViewModel.StartDate,
+                        EndDate = tripViewModel.EndDate,
+                    };
+                    _tripService.UpdateTrip(trip);
+                    _tripService.SaveTrip();
+                }
                 return RedirectToAction("Index", "Trips");
             }
             else
