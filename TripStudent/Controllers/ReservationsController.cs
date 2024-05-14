@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TripStudent.Controllers
 {
-    [Authorize]
+    
     public class ReservationsController : Controller
     {
         private IReservationService _reservationService;

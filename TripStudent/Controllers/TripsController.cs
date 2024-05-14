@@ -15,9 +15,11 @@ using TripStudent.Services.Interfaces;
 using TripStudent.Validator;
 using TripStudent.ViewModel;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TripStudent.Controllers
 {
+    [Authorize] ///
     public class TripsController : Controller
     {
         private ITripService _tripService;
