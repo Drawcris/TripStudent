@@ -14,6 +14,7 @@ using TripStudent.Services;
 using TripStudent.Services.Interfaces;
 using TripStudent.Validator;
 using TripStudent.ViewModel;
+using AutoMapper;
 
 namespace TripStudent.Controllers
 {
@@ -21,11 +22,13 @@ namespace TripStudent.Controllers
     {
         private ITripService _tripService;
         private readonly IValidator<TripViewModel> _tripValidator;
+        private readonly IMapper _mapper;
 
-        public TripsController(ITripService options, IValidator<TripViewModel> tripValidator)
+        public TripsController(ITripService options, IValidator<TripViewModel> tripValidator, IMapper mapper)
         {
             this._tripService = options;
             _tripValidator = tripValidator;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -34,17 +37,12 @@ namespace TripStudent.Controllers
 
             var trips = await _tripService.GetAllTrips();
 
-            var TripViewModelList = trips.Select(trip => new TripViewModel
-            {
-               tripID = trip.tripID,
-               Destination = trip.Destination,
-               Price = trip.Price,
-               StartDate = trip.StartDate,
-               EndDate = trip.EndDate,
-            });
+            var tripViewModelList = _mapper.Map<List<TripViewModel>>(trips);
+
+            return View(tripViewModelList);
 
 
-            return View(TripViewModelList);
+            
             
         }
 
@@ -57,25 +55,43 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult AddTrip(TripViewModel tripViewModel)
         {
-            var _TripValidator = _tripValidator.Validate(tripViewModel);
-            if (_TripValidator.IsValid) {
-                if (ModelState.IsValid)
-                {
-                    var trip = new Trip
-                    {
-                        tripID = tripViewModel.tripID,
-                        Destination = tripViewModel.Destination,
-                        Price = tripViewModel.Price,
-                        StartDate = tripViewModel.StartDate,
-                        EndDate = tripViewModel.EndDate,
-                    };
-                    _tripService.AddTrip(trip);
-                    _tripService.SaveTrip();
-                }
-                return RedirectToAction("Index", "Trips");
-            }
+            //var _TripValidator = _tripValidator.Validate(tripViewModel);
+            //if (_TripValidator.IsValid) {
+            //    if (ModelState.IsValid)
+            //    {
+            //        var trip = new Trip
+            //        {
+            //            tripID = tripViewModel.tripID,
+            //            Destination = tripViewModel.Destination,
+            //            Price = tripViewModel.Price,
+            //            StartDate = tripViewModel.StartDate,
+            //            EndDate = tripViewModel.EndDate,
+            //        };
+            //        _tripService.AddTrip(trip);
+            //        _tripService.SaveTrip();
+            //    }
+            //    return RedirectToAction("Index", "Trips");
+            //}
 
-            return View();
+            //return View();
+
+            var _TripValidator = _tripValidator.Validate(tripViewModel);
+
+            if (!_TripValidator.IsValid)
+            {
+                foreach (var failure in _TripValidator.Errors)
+                {
+                    ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+            }
+            if (_TripValidator.IsValid)
+            {
+                var trip = _mapper.Map<TripViewModel, Trip>(tripViewModel);
+                _tripService.AddTrip(trip);
+                _tripService.SaveTrip();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(tripViewModel);
         }
 
         [HttpGet]

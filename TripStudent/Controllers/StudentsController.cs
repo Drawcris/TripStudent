@@ -58,27 +58,52 @@ namespace TripStudent.Controllers
         [HttpPost]
         public ActionResult AddStudent(StudentViewModel studentViewModel)
         {
+            //var _StudentValidator = _studentValidator.Validate(studentViewModel);
+            //if (_StudentValidator.IsValid)
+            //{
+
+            //    if (ModelState.IsValid)
+            //    {
+            //        var student = new Student
+            //        {
+            //            studentID = studentViewModel.studentID,
+            //            name = studentViewModel.name,
+            //            lastname = studentViewModel.lastname,
+            //            email = studentViewModel.email
+
+            //        };
+            //        _studentService.AddStudent(student);
+            //        _studentService.SaveStudent();
+            //        return RedirectToAction("Index", "Students");
+            //    }
+            //    else
+            //    {
+            //        foreach (var failure in _StudentValidator.Errors)
+            //        {
+            //            ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+            //        }
+            //    }
+
+
+            //}
+            //return View();
             var _StudentValidator = _studentValidator.Validate(studentViewModel);
+
+            if (!_StudentValidator.IsValid)
+            {
+                foreach (var failure in _StudentValidator.Errors)
+                {
+                    ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+            }
             if (_StudentValidator.IsValid)
             {
-
-                if (ModelState.IsValid)
-                {
-                    var student = new Student
-                    {
-                        studentID = studentViewModel.studentID,
-                        name = studentViewModel.name,
-                        lastname = studentViewModel.lastname,
-                        email = studentViewModel.email
-
-                    };
-                    _studentService.AddStudent(student);
-                    _studentService.SaveStudent();
-                    return RedirectToAction("Index", "Students");
-                }
-
+                var student = _mapper.Map<StudentViewModel, Student>(studentViewModel);
+                _studentService.AddStudent(student);
+                _studentService.SaveStudent();
+                return RedirectToAction(nameof(Index));
             }
-            return View();
+            return View(studentViewModel);
         }
 
         [HttpGet]
