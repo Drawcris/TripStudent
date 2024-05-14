@@ -8,6 +8,7 @@ using FluentValidation;
 using TripStudent.ViewModel;
 using TripStudent.Validator;
 using TripStudent.AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
@@ -27,6 +28,8 @@ builder.Services.AddAutoMapper(options =>
 // Add DbContext to the service collection
 builder.Services.AddDbContext<TripContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<TripContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -48,6 +51,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",

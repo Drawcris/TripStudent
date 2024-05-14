@@ -8,7 +8,7 @@ namespace TripStudent.ViewModel
 
         public string Destination { get; set; }
 
-        public decimal Price { get; set; }
+        public double Price { get; set; }
 
         public DateTime StartDate { get; set; }
 

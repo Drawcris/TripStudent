@@ -1,11 +1,13 @@
 ﻿using TripStudent.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace TripStudent.Data
 {
-    public class TripContext : DbContext
+    public class TripContext : IdentityDbContext<IdentityUser>
     {
-        public TripContext(DbContextOptions<TripContext> options) : base(options) 
+        public TripContext(DbContextOptions<TripContext> options) : base(options)
         {
         }
 
@@ -15,6 +17,7 @@ namespace TripStudent.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Trip>().ToTable("Trip");
             modelBuilder.Entity<Reservation>().ToTable("Reservation");
             modelBuilder.Entity<Student>().ToTable("Student");
