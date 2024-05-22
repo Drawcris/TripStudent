@@ -10,6 +10,8 @@ using TripStudent.Validator;
 using TripStudent.AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -29,7 +31,9 @@ builder.Services.AddAutoMapper(options =>
 builder.Services.AddDbContext<TripContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<TripContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>() ///
+    .AddEntityFrameworkStores<TripContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -56,6 +60,63 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+using(var scope = app.Services.CreateScope())
+{
+     var roleManager = 
+        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+     var roles = new string[] { "Admin", "User", "Manager" };
+     
+     foreach(var role in roles)
+        {
+            if(!await roleManager.RoleExistsAsync(role))
+                 await roleManager.CreateAsync(new IdentityRole(role));    
+        }
+
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager =
+       scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();  
+
+    string email = "admin@admin.pl";
+    string password = "Admin.12345";
+
+    if(await userManager.FindByEmailAsync(email) == null)
+    {
+        var user = new IdentityUser();
+        user.Email = email;
+        user.UserName = email;
+        user.EmailConfirmed = true;
+
+        await userManager.CreateAsync(user, password);
+        await userManager.AddToRoleAsync(user, "Admin");
+    }
+
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager =
+       scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    string email = "manager@manager.pl";
+    string password = "Manager.12345";
+
+    if (await userManager.FindByEmailAsync(email) == null)
+    {
+        var user = new IdentityUser();
+        user.Email = email;
+        user.UserName = email;
+        user.EmailConfirmed = true;
+
+        await userManager.CreateAsync(user, password);
+        await userManager.AddToRoleAsync(user, "Manager");
+    }
+
+}
 
 app.Run();
 

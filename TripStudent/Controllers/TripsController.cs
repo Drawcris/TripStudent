@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TripStudent.Controllers
 {
-    [Authorize] ///
+    [Authorize(Roles = "Admin, Manager, User")]
     public class TripsController : Controller
     {
         private ITripService _tripService;
@@ -55,27 +55,11 @@ namespace TripStudent.Controllers
         }
 
         [HttpPost]
+
+        [Authorize(Roles = "Admin, Manager")]
         public ActionResult AddTrip(TripViewModel tripViewModel)
         {
-            //var _TripValidator = _tripValidator.Validate(tripViewModel);
-            //if (_TripValidator.IsValid) {
-            //    if (ModelState.IsValid)
-            //    {
-            //        var trip = new Trip
-            //        {
-            //            tripID = tripViewModel.tripID,
-            //            Destination = tripViewModel.Destination,
-            //            Price = tripViewModel.Price,
-            //            StartDate = tripViewModel.StartDate,
-            //            EndDate = tripViewModel.EndDate,
-            //        };
-            //        _tripService.AddTrip(trip);
-            //        _tripService.SaveTrip();
-            //    }
-            //    return RedirectToAction("Index", "Trips");
-            //}
-
-            //return View();
+           
 
             var _TripValidator = _tripValidator.Validate(tripViewModel);
 
@@ -116,6 +100,7 @@ namespace TripStudent.Controllers
         }
 
         [HttpPost]
+
         public ActionResult EditTrip(TripViewModel tripViewModel)
         {
             var _TripValidator = _tripValidator.Validate(tripViewModel);
@@ -143,6 +128,7 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteTrip(int tripID)
         {
             var trip = await _tripService.GetTripById(tripID);
@@ -162,6 +148,8 @@ namespace TripStudent.Controllers
         }
 
         [HttpPost]
+
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int tripID)
         {
             _tripService.DeleteTrip(tripID);
