@@ -49,6 +49,8 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
+
+        [Authorize(Roles = "Admin, Manager")]
         public ActionResult AddTrip()
         {
             return View();
@@ -81,6 +83,8 @@ namespace TripStudent.Controllers
         }
 
         [HttpGet]
+
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<ActionResult> EditTrip(int tripID)
         {
             var trip = await _tripService.GetTripById(tripID);
@@ -101,6 +105,7 @@ namespace TripStudent.Controllers
 
         [HttpPost]
 
+        [Authorize(Roles = "Admin, Manager")]
         public ActionResult EditTrip(TripViewModel tripViewModel)
         {
             var _TripValidator = _tripValidator.Validate(tripViewModel);
