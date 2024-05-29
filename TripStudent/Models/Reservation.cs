@@ -11,12 +11,12 @@ namespace TripStudent.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int? reservationID { get; set; }
+        public int reservationID { get; set; }
 
-        public int? studentID { get; set; }
+        public int studentID { get; set; }
 
 
-        public int? tripID { get; set; }
+        public int tripID { get; set; }
 
         public DateTime? reservation_date { get; set; }
         public status? status { get; set; }
