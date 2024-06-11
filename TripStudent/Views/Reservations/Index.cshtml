@@ -1,48 +1,74 @@
 ﻿@model IEnumerable<TripStudent.ViewModel.ReservationViewModel>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Reservations";
 }
-<h2>Index</h2>
-<p>
-    @Html.ActionLink("Add Reservation", "AddReservation")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.reservation_date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Trip)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Student)
-        </th>
-        <th></th>
-    </tr>
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Reservations</h1>
+    <p class="mb-4">
+        <a href="@Url.Action("AddReservation")" class="btn btn-primary">Add Reservation</a>
+    </p>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Reservation List</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.reservation_date)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.status)
+                            </th>
+                            <th>
+                                Trip
+                            </th>
+                            <th>
+                                Student
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.reservation_date)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.status)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Trip.Destination)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Student.name)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("EditReservation", new { reservationID = item.reservationID })" class="btn btn-warning btn-sm">Edit</a>
+                                    <a href="@Url.Action("DeleteReservation", new { reservationID = item.reservationID })" class="btn btn-danger btn-sm">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.reservation_date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.tripID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.studentID)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "EditReservation", new { reservationID = item.reservationID }) |
-                @Html.ActionLink("Delete", "DeleteReservation", new { ReservationID = item.reservationID })
-            </td>
-        </tr>
-    }
-</table>
+@section Scripts {
+    <script src="~/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+}
